@@ -218,14 +218,14 @@ def tell_nowinvested():
 
 
 def tell_year(year: int):
-    print(f"{currency} [{year}] Sold: {round(fetch_year_sells(year), 2)}")
     print(f"{currency} [{year}] Bought: {round(fetch_year_buys(year), 2)}")
-    print(f"{currency} [{year}] Balance: {round(fetch_year_buys(year)-fetch_year_sells(year), 2)}")
+    print(f"{currency} [{year}] Sold: {round(fetch_year_sells(year), 2)}")
+    print(f"{currency} [{year}] Trades balance: {round(fetch_year_buys(year)-fetch_year_sells(year), 2)}")
     print(f"{currency} [{year}] Topups: {round(fetch_year_topups(year), 2)}")
     print(f"{currency} [{year}] Withdrawals: {round(fetch_year_withdrawals(year), 2)}")
 
 
-def fetch_eurrate():
+def fetch_eurrate() -> Decimal():
     url = "https://www.cnb.cz/en/financial-markets/foreign-exchange-market/central-bank-exchange-rate-fixing/central-bank-exchange-rate-fixing/daily.txt"
     response = requests.get(url)
     data = response.text
@@ -237,7 +237,7 @@ def fetch_eurrate():
             return rate
 
 
-def fetch_usdrate():
+def fetch_usdrate() -> Decimal():
     url = "https://www.cnb.cz/en/financial-markets/foreign-exchange-market/central-bank-exchange-rate-fixing/central-bank-exchange-rate-fixing/daily.txt"
     response = requests.get(url)
     data = response.text
@@ -255,6 +255,7 @@ def run():
     s_usd = fetch_usdrate()
     file = "file.csv"
     # file = input(f"Enter .csv file name: ")
+    divider = "="*37
 
     if not os.path.exists(file):
         print(f'File not found. Put your Revolut statement named "{file}" in the same directory as this programme and run it again.')
@@ -275,19 +276,19 @@ def run():
     fetch_withdrawals()
     fetch_topups()
 
-    year = datetime.now().year
+    currentyear = datetime.now().year
 
-    print("="*30)
+    print(divider)
     print(f"EUR to CZK rate used: {fetch_eurrate()}")
     print(f"USD to CZK rate used: {fetch_usdrate()}")
-    print("="*30)
-    tell_alltime()
-    print("="*30)
+    print(divider)
     tell_nowinvested()
-    print("="*30)
-    tell_year(year)
-    print("="*30)
-    fetch_startyear()
+    print(divider)
+    tell_alltime()
+    print(divider)
+    for year in range(currentyear, fetch_startyear()-1, -1):
+        tell_year(year)
+        print(divider)
     
 
 if __name__ == "__main__":
