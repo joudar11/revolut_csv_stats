@@ -5,16 +5,16 @@ from decimal import Decimal
 operations = []
 #0 = usd, 1 = eur for the following
 sells = [[], []]
-sells_sum = float(0)
+sells_sum = Decimal(0)
 buys = [[], []]
-buys_sum = float(0)
+buys_sum = Decimal(0)
 dividends = [[], []]
-dividends_sum = float(0)
+dividends_sum = Decimal(0)
 fees = [[], []]
-fees_sum = float(0)
+fees_sum = Decimal(0)
 
-usd = 21.97
-eur = 24.9
+usd = Decimal(21.97)
+eur = Decimal(24.9)
 
 def load_csv(filename: str):
     """
@@ -46,14 +46,14 @@ def fetch_sells():
     for operation in operations:
         if operation[2] == "SELL - MARKET":
             if operation[6] == "USD":
-                sells[0].append(float(operation[5]))
+                sells[0].append(Decimal(operation[5]))
             if operation[6] == "EUR":
-                sells[1].append(float(operation[5]))
+                sells[1].append(Decimal(operation[5]))
 
 
-def sum_sells() -> float:
-    usd_s = math.fsum(sells[0])*usd
-    eur_s = math.fsum(sells[1])*eur
+def sum_sells() -> Decimal:
+    usd_s = sum(sells[0])*usd
+    eur_s = sum(sells[1])*eur
     return usd_s+eur_s
 
 
@@ -61,14 +61,14 @@ def fetch_buys():
     for operation in operations:
         if operation[2] == "BUY - MARKET":
             if operation[6] == "USD":
-                buys[0].append(float(operation[5]))
+                buys[0].append(Decimal(operation[5]))
             if operation[6] == "EUR":
-                buys[1].append(float(operation[5]))
+                buys[1].append(Decimal(operation[5]))
 
 
-def sum_buys() -> float:
-    usd_b = math.fsum(buys[0])*usd
-    eur_b = math.fsum(buys[1])*eur
+def sum_buys() -> Decimal:
+    usd_b = sum(buys[0])*usd
+    eur_b = sum(buys[1])*eur
     return usd_b+eur_b
 
 
@@ -76,14 +76,14 @@ def fetch_dividends():
     for operation in operations:
         if operation[2] == "DIVIDEND":
             if operation[6] == "USD":
-                dividends[0].append(float(operation[5]))
+                dividends[0].append(Decimal(operation[5]))
             if operation[6] == "EUR":
-                dividends[1].append(float(operation[5]))
+                dividends[1].append(Decimal(operation[5]))
 
 
-def sum_dividends() -> float:
-    usd_d = math.fsum(dividends[0])*usd
-    eur_d = math.fsum(dividends[1])*eur
+def sum_dividends() -> Decimal:
+    usd_d = sum(dividends[0])*usd
+    eur_d = sum(dividends[1])*eur
     return usd_d+eur_d
 
 
@@ -91,25 +91,25 @@ def fetch_fees():
     for operation in operations:
         if operation[2] == "CUSTODY FEE":
             if operation[6] == "USD":
-                fees[0].append(abs(float(operation[5])))
+                fees[0].append(abs(Decimal(operation[5])))
             if operation[6] == "EUR":
-                fees[1].append(abs(float(operation[5])))
+                fees[1].append(abs(Decimal(operation[5])))
 
 
-def sum_fees() -> float:
-    usd_f = math.fsum(fees[0])*usd
-    eur_f = math.fsum(fees[1])*eur
+def sum_fees() -> Decimal:
+    usd_f = sum(fees[0])*usd
+    eur_f = sum(fees[1])*eur
     return usd_f+eur_f
 
 
 def fetch_year_sells():
-    sells = float(0)
+    sells = Decimal(0)
     for operation in operations:
         if operation[0].startswith("2025") and operation[2] == "SELL - MARKET":
             if operation[6] == "USD":
-                sells += float(operation[5])*usd
+                sells += Decimal(operation[5])*usd
             elif operation[6] == "EUR":
-                sells += float(operation[5])*eur
+                sells += Decimal(operation[5])*eur
     return sells
             
 
