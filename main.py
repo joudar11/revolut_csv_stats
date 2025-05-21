@@ -284,6 +284,7 @@ def run():
     print(f"USD to CZK rate used: {fetch_usdrate()}")
     print("="*30)
     tell_alltime()
+    print("="*30)
     tell_nowinvested()
     print("="*30)
     tell_year(year)
