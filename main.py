@@ -40,6 +40,9 @@ def remove_symbols():
 
 
 def fetch_sells():
+    '''
+    Fetches sells and saves them in global sells list.
+    '''
     for operation in operations:
         if operation[2] == "SELL - MARKET":
             if operation[6] == "USD":
@@ -49,12 +52,18 @@ def fetch_sells():
 
 
 def sum_sells() -> Decimal:
+    '''
+    Returns sum of sells in set currency.
+    '''
     usd_s = sum(sells[0])*usd
     eur_s = sum(sells[1])*eur
     return usd_s+eur_s
 
 
 def fetch_buys():
+    '''
+    Fetches buys and saves them in global buys list.
+    '''
     for operation in operations:
         if operation[2] == "BUY - MARKET":
             if operation[6] == "USD":
@@ -64,12 +73,18 @@ def fetch_buys():
 
 
 def sum_buys() -> Decimal:
+    '''
+    Returns sum of buys in set currency.
+    '''
     usd_b = sum(buys[0])*usd
     eur_b = sum(buys[1])*eur
     return usd_b+eur_b
 
 
 def fetch_dividends():
+    '''
+    Fetches dividends and saves them in global dividends list.
+    '''
     for operation in operations:
         if operation[2] == "DIVIDEND":
             if operation[6] == "USD":
@@ -79,12 +94,18 @@ def fetch_dividends():
 
 
 def sum_dividends() -> Decimal:
+    '''
+    Returns sum of dividends in set currency.
+    '''
     usd_d = sum(dividends[0])*usd
     eur_d = sum(dividends[1])*eur
     return usd_d+eur_d
 
 
 def fetch_fees():
+    '''
+    Fetches fees and saves them in global fees list.
+    '''
     for operation in operations:
         if operation[2] == "CUSTODY FEE":
             if operation[6] == "USD":
@@ -94,12 +115,18 @@ def fetch_fees():
 
 
 def sum_fees() -> Decimal:
+    '''
+    Returns sum of fees in set currency.
+    '''
     usd_f = sum(fees[0])*usd
     eur_f = sum(fees[1])*eur
     return usd_f+eur_f
 
 
 def fetch_year_sells(year: int) -> Decimal:
+    '''
+    Returns sum of sells in set currency in given year.
+    '''
     sells_y = Decimal(0)
     for operation in operations:
         if operation[0].startswith(str(year)) and operation[2] == "SELL - MARKET":
@@ -111,6 +138,9 @@ def fetch_year_sells(year: int) -> Decimal:
 
 
 def fetch_year_buys(year: int) -> Decimal:
+    '''
+    Returns sum of buys in set currency in given year.
+    '''
     buys_y = Decimal(0)
     for operation in operations:
         if operation[0].startswith(str(year)) and operation[2] == "BUY - MARKET":
@@ -122,6 +152,9 @@ def fetch_year_buys(year: int) -> Decimal:
             
 
 def fetch_year_topups(year: int) -> Decimal:
+    '''
+    Returns sum of topups in set currency in given year.
+    '''
     topups_y = Decimal(0)
     for operation in operations:
         if operation[0].startswith(str(year)) and operation[2] == "CASH TOP-UP":
@@ -133,6 +166,9 @@ def fetch_year_topups(year: int) -> Decimal:
 
 
 def fetch_year_withdrawals(year: int) -> Decimal:
+    '''
+    Returns sum of withdrawals in set currency in given year.
+    '''
     withdrawals_y = Decimal(0)
     for operation in operations:
         if operation[0].startswith(str(year)) and operation[2] == "CASH WITHDRAWAL":
@@ -144,6 +180,9 @@ def fetch_year_withdrawals(year: int) -> Decimal:
 
 
 def fetch_topups():
+    '''
+    Fetches topups and saves them in global topups list.
+    '''
     for operation in operations:
         if operation[2] == "CASH TOP-UP":
             if operation[6] == "USD":
@@ -153,12 +192,18 @@ def fetch_topups():
 
 
 def sum_topups() -> Decimal:
+    '''
+    Returns sum of topups in set currency.
+    '''
     usd_t = sum(topups[0])*usd
     eur_t = sum(topups[1])*eur
     return usd_t+eur_t
 
 
 def fetch_withdrawals():
+    '''
+    Fetches withdrawals and saves them in global withdrawals list.
+    '''
     for operation in operations:
         if operation[2] == "CASH WITHDRAWAL":
             if operation[6] == "USD":
@@ -168,22 +213,34 @@ def fetch_withdrawals():
 
 
 def sum_withdrawals() -> Decimal():
+    '''
+    Returns sum of withdrawals in set currency.
+    '''
     usd_w = sum(withdrawals[0])*usd
     eur_w = sum(withdrawals[1])*eur
     return usd_w+eur_w
 
 
 def set_usd(rate: Decimal):
+    '''
+    sets global variable for USD - CZK rate
+    '''
     global usd
     usd = rate
 
 
 def set_eur(rate: Decimal):
+    '''
+    sets global variable for EUR - CZK rate
+    '''
     global eur
     eur = rate
 
 
 def set_currency(curren: str):
+    '''
+    sets the global variable currency to be referred in tell functions
+    '''
     global currency
     currency = curren
 
@@ -203,6 +260,9 @@ def fetch_startyear() -> int:
 
 
 def tell_alltime():
+    '''
+    Tells various all-time stats
+    '''
 
     print(f"{currency} [ALL TIME] Sells: {round(sum_sells(), 2)}")
     print(f"{currency} [ALL TIME] Buys: {round(sum_buys(), 2)}")
@@ -214,10 +274,16 @@ def tell_alltime():
 
 
 def tell_nowinvested():
+    '''
+    Tells how much money is invested - sum of buys and sells
+    '''
     print(f"{currency} [NOW] Invested: {round(sum_buys()-sum_sells(), 2)}")
 
 
 def tell_year(year: int):
+    '''
+    Tells various stats for given year
+    '''
     print(f"{currency} [{year}] Bought: {round(fetch_year_buys(year), 2)}")
     print(f"{currency} [{year}] Sold: {round(fetch_year_sells(year), 2)}")
     print(f"{currency} [{year}] Invested: {round(fetch_year_buys(year)-fetch_year_sells(year), 2)}")
