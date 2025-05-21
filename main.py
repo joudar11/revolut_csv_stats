@@ -1,6 +1,7 @@
 import csv
-import math
+import requests
 from decimal import Decimal
+from datetime import datetime
 
 operations = []
 #0 = usd, 1 = eur for the following
@@ -16,10 +17,6 @@ topups = [[], []]
 topups_sum = Decimal(0)
 withdrawals = [[], []]
 withdrawals_sum = Decimal(0)
-
-usd = Decimal(21.97)
-eur = Decimal(24.9)
-currency = "CZK"
 
 def load_csv(filename: str):
     """
@@ -129,9 +126,26 @@ def fetch_year_buys(year: int) -> Decimal:
     return buys_y
             
 
-def fetch_ticker_stats():
-    #to be added
-    pass
+def fetch_year_topups(year: int) -> Decimal:
+    topups_y = Decimal(0)
+    for operation in operations:
+        if operation[0].startswith(str(year)) and operation[2] == "CASH TOP-UP":
+            if operation[6] == "USD":
+                topups_y += Decimal(operation[5])*usd
+            elif operation[6] == "EUR":
+                topups_y += Decimal(operation[5])*eur
+    return topups_y
+
+
+def fetch_year_withdrawals(year: int) -> Decimal:
+    withdrawals_y = Decimal(0)
+    for operation in operations:
+        if operation[0].startswith(str(year)) and operation[2] == "CASH WITHDRAWAL":
+            if operation[6] == "USD":
+                withdrawals_y += Decimal(operation[5])*usd
+            elif operation[6] == "EUR":
+                withdrawals_y += Decimal(operation[5])*eur
+    return withdrawals_y
 
 
 def fetch_topups():
@@ -163,9 +177,98 @@ def sum_withdrawals() -> Decimal():
     eur_w = sum(withdrawals[1])*eur
     return usd_w+eur_w
 
+
+def set_usd(rate: Decimal):
+    global usd
+    usd = rate
+
+
+def set_eur(rate: Decimal):
+    global eur
+    eur = rate
+
+
+def set_currency(curren: str):
+    global currency
+    currency = curren
+
+
+def fetch_startyear() -> int:
+    """
+    returns the year of the first financial operation
+    """
+    years = set()
+    for operation in operations:
+        years.add(int(operation[0][:4]))
+    startingyear = int(10000)
+    for year in years:
+        if year < startingyear:
+            startingyear = year
+    return startingyear
+
+
+def tell_alltime():
+
+    print(f"{currency} [ALL TIME] Sells: {round(sum_sells(), 2)}")
+    print(f"{currency} [ALL TIME] Buys: {round(sum_buys(), 2)}")
+    print(f"{currency} [ALL TIME] Dividends: {round(sum_dividends(), 2)}")
+    print(f"{currency} [ALL TIME] Fees: {round(sum_fees(), 2)}")
+    print(f"{currency} [ALL TIME] Topups: {round(sum_topups(), 2)}")
+    print(f"{currency} [ALL TIME] Withdrawals: {round(sum_withdrawals(), 2)}")
+    print(f"{currency} [ALL TIME] Balance: {round(sum_topups()-abs(sum_withdrawals()), 2)}")
+
+
+def tell_nowinvested():
+    print(f"{currency} [NOW] Invested: {round(sum_buys()-sum_sells(), 2)}")
+
+
+def tell_year(year: int):
+    print(f"{currency} [{year}] Sold: {round(fetch_year_sells(year), 2)}")
+    print(f"{currency} [{year}] Bought: {round(fetch_year_buys(year), 2)}")
+    print(f"{currency} [{year}] Balance: {round(fetch_year_buys(year)-fetch_year_sells(year), 2)}")
+    print(f"{currency} [{year}] Topups: {round(fetch_year_topups(year), 2)}")
+    print(f"{currency} [{year}] Withdrawals: {round(fetch_year_withdrawals(year), 2)}")
+
+
+def fetch_eurrate():
+    url = "https://www.cnb.cz/en/financial-markets/foreign-exchange-market/central-bank-exchange-rate-fixing/central-bank-exchange-rate-fixing/daily.txt"
+    response = requests.get(url)
+    data = response.text
+
+    for line in data.splitlines():
+        if "EUR" in line:
+            parts = line.split("|")
+            rate = Decimal(parts[4].replace(",", "."))
+            return rate
+
+
+def fetch_usdrate():
+    url = "https://www.cnb.cz/en/financial-markets/foreign-exchange-market/central-bank-exchange-rate-fixing/central-bank-exchange-rate-fixing/daily.txt"
+    response = requests.get(url)
+    data = response.text
+
+    for line in data.splitlines():
+        if "USD" in line:
+            parts = line.split("|")
+            rate = Decimal(parts[4].replace(",", "."))
+            return rate
+
+
 def run():
+    s_currency = "CZK"
+    s_eur = fetch_eurrate()
+    s_usd = fetch_usdrate()
     file = "file.csv"
+    # file = input(f"Enter .csv file name: ")
+
+
+
+    set_eur(Decimal(s_eur))
+    set_usd(Decimal(s_usd))
+    set_currency(s_currency)
+
     load_csv(file)
+
     remove_symbols()
     fetch_sells()
     fetch_buys()
@@ -173,31 +276,19 @@ def run():
     fetch_fees()
     fetch_withdrawals()
     fetch_topups()
-    year = 2025
 
-    sells_sum = sum_sells()
-    buys_sum = sum_buys()
-    dividends_sum = sum_dividends()
-    sells_year = fetch_year_sells(year)
-    buys_year = fetch_year_buys(year)
-    fees_sum = sum_fees()
-    withdrawals_sum = sum_withdrawals()
-    topups_sum = sum_topups()
+    year = datetime.now().year
 
     print("="*30)
-    print(f"{currency} [ALL TIME] Sells: {round(sells_sum, 2)}")
-    print(f"{currency} [ALL TIME] Buys: {round(buys_sum, 2)}")
-    print(f"{currency} [ALL TIME] Dividends: {round(dividends_sum, 2)}")
-    print(f"{currency} [ALL TIME] Fees: {round(fees_sum, 2)}")
-    print(f"{currency} [ALL TIME] Topups: {round(topups_sum, 2)}")
-    print(f"{currency} [ALL TIME] Withdrawals: {round(withdrawals_sum, 2)}")
-    print(f"{currency} [NOW] Invested: {round(buys_sum-sells_sum, 2)}")
+    print(f"EUR to CZK rate used: {fetch_eurrate()}")
+    print(f"USD to CZK rate used: {fetch_usdrate()}")
     print("="*30)
-    print(f"{currency} [{year}] Sold: {round(sells_year, 2)}")
-    print(f"{currency} [{year}] Bought: {round(buys_year, 2)}")
-    print(f"{currency} [{year}] Balance: {round(buys_year-sells_year, 2)}")
+    tell_alltime()
+    tell_nowinvested()
     print("="*30)
-
+    tell_year(year)
+    print("="*30)
+    fetch_startyear()
     
 
 if __name__ == "__main__":
