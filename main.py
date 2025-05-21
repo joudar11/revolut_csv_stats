@@ -2,21 +2,16 @@ import csv
 import requests
 from decimal import Decimal
 from datetime import datetime
+import os
 
 operations = []
 #0 = usd, 1 = eur for the following
 sells = [[], []]
-sells_sum = Decimal(0)
 buys = [[], []]
-buys_sum = Decimal(0)
 dividends = [[], []]
-dividends_sum = Decimal(0)
 fees = [[], []]
-fees_sum = Decimal(0)
 topups = [[], []]
-topups_sum = Decimal(0)
 withdrawals = [[], []]
-withdrawals_sum = Decimal(0)
 
 def load_csv(filename: str):
     """
@@ -261,7 +256,10 @@ def run():
     file = "file.csv"
     # file = input(f"Enter .csv file name: ")
 
-
+    if not os.path.exists(file):
+        print(f'File not found. Put your Revolut statement named "{file}" in the same directory as this programme and run it again.')
+        print("Terminating...")
+        quit()
 
     set_eur(Decimal(s_eur))
     set_usd(Decimal(s_usd))
