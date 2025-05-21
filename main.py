@@ -220,9 +220,10 @@ def tell_nowinvested():
 def tell_year(year: int):
     print(f"{currency} [{year}] Bought: {round(fetch_year_buys(year), 2)}")
     print(f"{currency} [{year}] Sold: {round(fetch_year_sells(year), 2)}")
-    print(f"{currency} [{year}] Trades balance: {round(fetch_year_buys(year)-fetch_year_sells(year), 2)}")
+    print(f"{currency} [{year}] Invested: {round(fetch_year_buys(year)-fetch_year_sells(year), 2)}")
     print(f"{currency} [{year}] Topups: {round(fetch_year_topups(year), 2)}")
     print(f"{currency} [{year}] Withdrawals: {round(fetch_year_withdrawals(year), 2)}")
+    print(f"{currency} [{year}] Balance: {round(fetch_year_topups(year)-abs(fetch_year_withdrawals(year)), 2)}")
 
 
 def fetch_eurrate() -> Decimal():
