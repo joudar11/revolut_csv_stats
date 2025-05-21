@@ -2,7 +2,7 @@ Place Revolut statement named file.csv in the root directory, run the script, ge
 The programme gives you various stats - all time and for each year available in the statement.
 
 Example run (actual numbers replaced by XXX as to remain privacy):
-
+```
 =====================================
 EUR to CZK rate used: 24.870
 USD to CZK rate used: 21.967
@@ -31,3 +31,4 @@ CZK [2024] Topups: XXX
 CZK [2024] Withdrawals:XXX
 CZK [2024] Balance: XXX
 =====================================
+```
