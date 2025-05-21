@@ -12,9 +12,14 @@ dividends = [[], []]
 dividends_sum = Decimal(0)
 fees = [[], []]
 fees_sum = Decimal(0)
+topups = [[], []]
+topups_sum = Decimal(0)
+withdrawals = [[], []]
+withdrawals_sum = Decimal(0)
 
 usd = Decimal(21.97)
 eur = Decimal(24.9)
+currency = "CZK"
 
 def load_csv(filename: str):
     """
@@ -102,21 +107,61 @@ def sum_fees() -> Decimal:
     return usd_f+eur_f
 
 
-def fetch_year_sells():
-    sells = Decimal(0)
+def fetch_year_sells(year: int) -> Decimal:
+    sells_y = Decimal(0)
     for operation in operations:
-        if operation[0].startswith("2025") and operation[2] == "SELL - MARKET":
+        if operation[0].startswith(str(year)) and operation[2] == "SELL - MARKET":
             if operation[6] == "USD":
-                sells += Decimal(operation[5])*usd
+                sells_y += Decimal(operation[5])*usd
             elif operation[6] == "EUR":
-                sells += Decimal(operation[5])*eur
-    return sells
+                sells_y += Decimal(operation[5])*eur
+    return sells_y
+
+
+def fetch_year_buys(year: int) -> Decimal:
+    buys_y = Decimal(0)
+    for operation in operations:
+        if operation[0].startswith(str(year)) and operation[2] == "BUY - MARKET":
+            if operation[6] == "USD":
+                buys_y += Decimal(operation[5])*usd
+            elif operation[6] == "EUR":
+                buys_y += Decimal(operation[5])*eur
+    return buys_y
             
 
 def fetch_ticker_stats():
     #to be added
     pass
 
+
+def fetch_topups():
+    for operation in operations:
+        if operation[2] == "CASH TOP-UP":
+            if operation[6] == "USD":
+                topups[0].append(Decimal(operation[5]))
+            if operation[6] == "EUR":
+                topups[1].append(Decimal(operation[5]))
+
+
+def sum_topups() -> Decimal:
+    usd_t = sum(topups[0])*usd
+    eur_t = sum(topups[1])*eur
+    return usd_t+eur_t
+
+
+def fetch_withdrawals():
+    for operation in operations:
+        if operation[2] == "CASH WITHDRAWAL":
+            if operation[6] == "USD":
+                withdrawals[0].append(Decimal(operation[5]))
+            if operation[6] == "EUR":
+                withdrawals[1].append(Decimal(operation[5]))
+
+
+def sum_withdrawals() -> Decimal():
+    usd_w = sum(withdrawals[0])*usd
+    eur_w = sum(withdrawals[1])*eur
+    return usd_w+eur_w
 
 def run():
     file = "file.csv"
@@ -126,20 +171,31 @@ def run():
     fetch_buys()
     fetch_dividends()
     fetch_fees()
+    fetch_withdrawals()
+    fetch_topups()
+    year = 2025
 
     sells_sum = sum_sells()
     buys_sum = sum_buys()
     dividends_sum = sum_dividends()
-    sells_year = fetch_year_sells()
+    sells_year = fetch_year_sells(year)
+    buys_year = fetch_year_buys(year)
     fees_sum = sum_fees()
+    withdrawals_sum = sum_withdrawals()
+    topups_sum = sum_topups()
 
     print("="*30)
-    print(f"CZK [ALL TIME] Sells: {round(sells_sum, 2)}")
-    print(f"CZK [ALL TIME] Buys: {round(buys_sum, 2)}")
-    print(f"CZK [ALL TIME] Dividends: {round(dividends_sum, 2)}")
-    print(f"CZK [ALL TIME] Fees: {round(fees_sum, 2)}")
-    print(f"CZK [NOW] Invested: {round(buys_sum-sells_sum, 2)}")
-    print(f"CZK [THIS YEAR] Sold: {round(sells_year, 2)}")
+    print(f"{currency} [ALL TIME] Sells: {round(sells_sum, 2)}")
+    print(f"{currency} [ALL TIME] Buys: {round(buys_sum, 2)}")
+    print(f"{currency} [ALL TIME] Dividends: {round(dividends_sum, 2)}")
+    print(f"{currency} [ALL TIME] Fees: {round(fees_sum, 2)}")
+    print(f"{currency} [ALL TIME] Topups: {round(topups_sum, 2)}")
+    print(f"{currency} [ALL TIME] Withdrawals: {round(withdrawals_sum, 2)}")
+    print(f"{currency} [NOW] Invested: {round(buys_sum-sells_sum, 2)}")
+    print("="*30)
+    print(f"{currency} [{year}] Sold: {round(sells_year, 2)}")
+    print(f"{currency} [{year}] Bought: {round(buys_year, 2)}")
+    print(f"{currency} [{year}] Balance: {round(buys_year-sells_year, 2)}")
     print("="*30)
 
     
