@@ -402,17 +402,18 @@ def tell_tickers():
         
         print(f"Ticker: {ticker}")
         print(f"Amount: {amount_print}")
-        print(f"Current price per 1 share: {tell(price)} {currency_}")
-        print(f"Current value: {tell(value)} {currency_}")
+        print(f"")
+        print(f"{currency_} Current price per 1 share: {tell(price)}")
+        print(f"{currency_} Current value: {tell(value)}")
 
         if currency_ == "USD":
-            print(f"SUM invested {currency}: {tell(money)}")
-            print(f"Current value {currency}: {tell(value * usd)}")
-            print(f"Profit/loss {currency}: {tell((value * usd) - money)}")
+            print(f"{currency} SUM invested: {tell(money)}")
+            print(f"{currency} Current value: {tell(value * usd)}")
+            print(f"{currency} Profit/loss: {tell((value * usd) - money)}")
         elif currency_ == "EUR":
-            print(f"SUM invested {currency}: {tell(money)}")
-            print(f"Current value {currency}: {tell(value * eur)}")
-            print(f"Profit/loss {currency}: {tell((value * eur) - money)}")
+            print(f"{currency} SUM invested: {tell(money)}")
+            print(f"{currency} Current value: {tell(value * eur)}")
+            print(f"{currency} Profit/loss: {tell((value * eur) - money)}")
         else:
             print("ERROR.")
         print(divider)
