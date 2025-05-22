@@ -472,7 +472,7 @@ def run():
     s_currency = "CZK"
     # name of the Revolut statement .csv file
     global file
-    file = "23.csv"
+    file = "statement.csv"
 
     # divider to be shown in report
     global divider
