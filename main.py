@@ -427,6 +427,13 @@ def get_currency(ticker: str) -> str:
         return "N/A"
 
 
+def check_file(filename):
+    if not os.path.exists(filename):
+        global file
+        print(f'File not found. Put your Revolut statement named "{filename}" in the same directory as this programme and run it again.')
+        file = input(f"... or - enter file name: ")
+
+
 def run():
     # how many decimals to be used in stats:
     global decimals
@@ -434,19 +441,21 @@ def run():
     # name of currency showns in stats (CZK)
     s_currency = "CZK"
     # name of the Revolut statement .csv file
+    global file
     file = "statement.csv"
-    if not file.endswith(".csv"):
-        file += ".csv"
+
     # divider to be shown in report
     global divider
     divider = "="*40
 
     # check file exists
+    check_file(file)
+    if not file.endswith(".csv"):
+        file += ".csv"
     if not os.path.exists(file):
         print(f'File not found. Put your Revolut statement named "{file}" in the same directory as this programme and run it again.')
         print("Terminating...")
         quit()
-
     # set currency name and fx rates
     s_eur = fetch_eurrate()
     s_usd = fetch_usdrate()
