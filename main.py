@@ -266,7 +266,7 @@ def tell_alltime():
 
     print(f"{currency} [ALL TIME] Sells: {tell(sum_sells())}")
     print(f"{currency} [ALL TIME] Buys: {tell(sum_buys())}")
-    print(f"{currency} [ALL TIME] Invested: {tell(sum_buys()-sum_sells())}")
+    print(f"{currency} [ALL TIME] Balance: {tell(sum_buys()-sum_sells())}")
     print(f"{currency} [ALL TIME] Dividends: {tell(sum_dividends())}")
     print(f"{currency} [ALL TIME] Fees: {tell(sum_fees())}")
     print(f"{currency} [ALL TIME] Topups: {tell(sum_topups())}")
