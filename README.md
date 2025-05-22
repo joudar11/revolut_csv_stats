@@ -1,3 +1,59 @@
+# revolut_csv_stats
+
+A Python app to **analyze your Revolut investment statement**. It automatically parses the `.csv` file, calculates buys, sells, dividends, fees, deposits, withdrawals, the current value of held stocks, and the profit/loss in CZK. The output includes per-year breakdowns and total summaries.
+
+---
+
+## Features
+
+- Automatic calculation of:
+  - Buys, sells, and dividends
+  - Fees and net deposits/withdrawals
+  - Current value of held stocks
+- Currency conversion using **live CZK rates from CNB** (for EUR and USD)
+- Multi-currency transaction support
+- Ticker correction for Yahoo Finance (e.g., `BRK.B â†’ BRK-B`)
+- Console output grouped by year and total
+
+---
+
+## Sample Output
+
+```
+========================================
+EUR to CZK rate used: 24.570
+USD to CZK rate used: 22.980
+========================================
+
+CZK [NOW] Invested: 58240.320
+CZK [NOW] Value: 61221.270
+CZK [NOW] Profit/loss: 2980.950
+
+========================================
+CZK [ALL TIME] Sells: 11986.620
+CZK [ALL TIME] Buys: 10584.180
+CZK [ALL TIME] Balance: -1402.440
+CZK [ALL TIME] Dividends: 120.900
+CZK [ALL TIME] Fees: 98.400
+CZK [ALL TIME] Topups: 57700.000
+CZK [ALL TIME] Withdrawals: 540.320
+...
+```
+
+---
+
+## Requirements
+
+- Python 3.10+
+- Libraries:
+  - `requests`
+  - `yfinance`
+  - `decimal` (built-in)
+  - `csv`, `datetime`, `os` (built-in)
+
+---
+
+## Installation
 
 1. **Clone the repository**:
     ```bash
