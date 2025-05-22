@@ -322,7 +322,7 @@ def run():
     s_usd = fetch_usdrate()
     file = "file.csv"
     # file = input(f"Enter .csv file name: ")
-    divider = "="*37
+    divider = "="*40
 
     if not os.path.exists(file):
         print(f'File not found. Put your Revolut statement named "{file}" in the same directory as this programme and run it again.')
