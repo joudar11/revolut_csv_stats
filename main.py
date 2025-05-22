@@ -3,6 +3,7 @@ import requests
 from decimal import Decimal
 from datetime import datetime
 import os
+import yfinance as yf
 
 operations = []
 #0 = usd, 1 = eur for the following
@@ -361,7 +362,6 @@ def fetch_tickers():
                     tickers[ticker][1] += money
      
 
-
 def tell_tickers():
     print(f"Ticker summaries:")
     print(divider)
@@ -370,11 +370,61 @@ def tell_tickers():
             amount_print = int(0)
         else:
             amount_print = amount
+
+        price = get_price(ticker)
+        currency_ = get_currency(ticker)
+        value = amount_print * price
+
+        
         print(f"Ticker: {ticker}")
         print(f"Amount: {amount_print}")
-        print(f"SUM: {tell(money)} {currency}")
+        print(f"Current price per 1 share: {tell(price)} {currency_}")
+        print(f"Current value: {tell(value)} {currency_}")
+
+        if currency_ == "USD":
+            print(f"SUM invested {currency}: {tell(money)}")
+            print(f"Current value {currency}: {tell(value * usd)}")
+            print(f"Profit/loss {currency}: {tell((value * usd) - money)}")
+        elif currency_ == "EUR":
+            print(f"SUM invested {currency}: {tell(money)}")
+            print(f"Current value {currency}: {tell(value * eur)}")
+            print(f"Profit/loss {currency}: {tell((value * eur) - money)}")
+        else:
+            print("ERROR.")
         print(divider)
-    pass
+
+
+def fix_ticker(ticker: str) -> str:
+    corrections = {
+        "BRK.B": "BRK-B",
+        "BRK.A": "BRK-A",
+        "RHM": "RHM.DE",
+    }
+    return corrections.get(ticker, ticker)
+
+
+def get_price(ticker: str) -> Decimal:
+    """
+    Returns the current price of a given stock ticker using Yahoo Finance.
+    """
+    ticker = fix_ticker(ticker)
+    try:
+        stock = yf.Ticker(ticker)
+        data = stock.history(period="1d")
+        price = data["Close"].iloc[-1]
+        return Decimal(price)
+    except Exception as e:
+        print(f"Error getting price {ticker}: {e}")
+        return Decimal(0)
+
+
+def get_currency(ticker: str) -> str:
+    ticker = fix_ticker(ticker)
+    try:
+        stock = yf.Ticker(ticker)
+        return stock.info.get("currency", "N/A")
+    except:
+        return "N/A"
 
 
 def run():
@@ -384,7 +434,7 @@ def run():
     # name of currency showns in stats (CZK)
     s_currency = "CZK"
     # name of the Revolut statement .csv file
-    file = "file.csv"
+    file = "statement.csv"
     if not file.endswith(".csv"):
         file += ".csv"
     # divider to be shown in report
