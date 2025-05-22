@@ -318,7 +318,7 @@ def tell_year(year: int):
     print(f"{currency} [{year}] Invested: {tell(fetch_year_topups(year)+fetch_year_withdrawals(year))}")
 
 
-def fetch_eurrate() -> Decimal():
+def fetch_fxrate(currency_: str) -> Decimal():
     """
     returns current fx rate for eur - czk pair
     """
@@ -327,22 +327,7 @@ def fetch_eurrate() -> Decimal():
     data = response.text
 
     for line in data.splitlines():
-        if "EUR" in line:
-            parts = line.split("|")
-            rate = Decimal(parts[4].replace(",", "."))
-            return rate
-
-
-def fetch_usdrate() -> Decimal():
-    """
-    returns current fx rate for usd - czk pair
-    """
-    url = "https://www.cnb.cz/en/financial-markets/foreign-exchange-market/central-bank-exchange-rate-fixing/central-bank-exchange-rate-fixing/daily.txt"
-    response = requests.get(url)
-    data = response.text
-
-    for line in data.splitlines():
-        if "USD" in line:
+        if currency_.upper() in line:
             parts = line.split("|")
             rate = Decimal(parts[4].replace(",", "."))
             return rate
@@ -488,8 +473,8 @@ def run():
         print("Terminating...")
         quit()
     # set currency name and fx rates
-    s_eur = fetch_eurrate()
-    s_usd = fetch_usdrate()
+    s_eur = fetch_fxrate("EUR")
+    s_usd = fetch_fxrate("USD")
     set_eur(Decimal(s_eur))
     set_usd(Decimal(s_usd))
     set_currency(s_currency)
@@ -509,8 +494,8 @@ def run():
     currentyear = datetime.now().year
 
     print(divider)
-    print(f"EUR to CZK rate used: {fetch_eurrate()}")
-    print(f"USD to CZK rate used: {fetch_usdrate()}")
+    print(f"EUR to CZK rate used: {s_eur}")
+    print(f"USD to CZK rate used: {s_usd}")
     print(divider)
     tell_nowinvested()
     print(divider)
