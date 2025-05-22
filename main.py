@@ -282,6 +282,7 @@ def tell_nowinvested():
     print(f"{currency} [NOW] Invested: {tell(sum_topups()+sum_withdrawals())}")
     print("    (Topups - withdrawals)")
 
+
 def tell_year(year: int):
     '''
     Tells various stats for given year
@@ -395,6 +396,9 @@ def tell_tickers():
 
 
 def fix_ticker(ticker: str) -> str:
+    """
+    some tickers from revolut appear differently in yfinance - needs to be fixed
+    """
     corrections = {
         "BRK.B": "BRK-B",
         "BRK.A": "BRK-A",
@@ -419,6 +423,9 @@ def get_price(ticker: str) -> Decimal:
 
 
 def get_currency(ticker: str) -> str:
+    """
+    get ticker currency
+    """
     ticker = fix_ticker(ticker)
     try:
         stock = yf.Ticker(ticker)
