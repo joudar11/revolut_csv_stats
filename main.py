@@ -264,35 +264,38 @@ def tell_alltime():
     Tells various all-time stats
     '''
 
-    print(f"{currency} [ALL TIME] Sells: {round(sum_sells(), 2)}")
-    print(f"{currency} [ALL TIME] Buys: {round(sum_buys(), 2)}")
-    print(f"{currency} [ALL TIME] Dividends: {round(sum_dividends(), 2)}")
-    print(f"{currency} [ALL TIME] Fees: {round(sum_fees(), 2)}")
-    print(f"{currency} [ALL TIME] Topups: {round(sum_topups(), 2)}")
-    print(f"{currency} [ALL TIME] Withdrawals: {round(sum_withdrawals(), 2)}")
-    print(f"{currency} [ALL TIME] Balance: {round(sum_topups()+sum_withdrawals(), 2)}")
+    print(f"{currency} [ALL TIME] Sells: {tell(sum_sells())}")
+    print(f"{currency} [ALL TIME] Buys: {tell(sum_buys())}")
+    print(f"{currency} [ALL TIME] Invested: {tell(sum_buys()-sum_sells())}")
+    print(f"{currency} [ALL TIME] Dividends: {tell(sum_dividends())}")
+    print(f"{currency} [ALL TIME] Fees: {tell(sum_fees())}")
+    print(f"{currency} [ALL TIME] Topups: {tell(sum_topups())}")
+    print(f"{currency} [ALL TIME] Withdrawals: {tell(sum_withdrawals())}")
 
 
 def tell_nowinvested():
     '''
-    Tells how much money is invested - sum of buys and sells
+    Tells how much money is invested - sum of topups and withdrawals
     '''
-    print(f"{currency} [NOW] Invested: {round(sum_buys()-sum_sells(), 2)}")
-
+    print(f"{currency} [NOW] Invested: {tell(sum_topups()+sum_withdrawals())}")
+    print("    (Topups - withdrawals)")
 
 def tell_year(year: int):
     '''
     Tells various stats for given year
     '''
-    print(f"{currency} [{year}] Bought: {round(fetch_year_buys(year), 2)}")
-    print(f"{currency} [{year}] Sold: {round(fetch_year_sells(year), 2)}")
-    print(f"{currency} [{year}] Invested: {round(fetch_year_buys(year)-fetch_year_sells(year), 2)}")
-    print(f"{currency} [{year}] Topups: {round(fetch_year_topups(year), 2)}")
-    print(f"{currency} [{year}] Withdrawals: {round(fetch_year_withdrawals(year), 2)}")
-    print(f"{currency} [{year}] Balance: {round(fetch_year_topups(year)+fetch_year_withdrawals(year), 2)}")
+    print(f"{currency} [{year}] Bought: {tell(fetch_year_buys(year))}")
+    print(f"{currency} [{year}] Sold: {tell(fetch_year_sells(year))}")
+    print(f"{currency} [{year}] Balance: {tell(fetch_year_buys(year)-fetch_year_sells(year))}")
+    print(f"{currency} [{year}] Topups: {tell(fetch_year_topups(year))}")
+    print(f"{currency} [{year}] Withdrawals: {tell(fetch_year_withdrawals(year))}")
+    print(f"{currency} [{year}] Invested: {tell(fetch_year_topups(year)+fetch_year_withdrawals(year))}")
 
 
 def fetch_eurrate() -> Decimal():
+    """
+    returns current fx rate for eur - czk pair
+    """
     url = "https://www.cnb.cz/en/financial-markets/foreign-exchange-market/central-bank-exchange-rate-fixing/central-bank-exchange-rate-fixing/daily.txt"
     response = requests.get(url)
     data = response.text
@@ -305,6 +308,9 @@ def fetch_eurrate() -> Decimal():
 
 
 def fetch_usdrate() -> Decimal():
+    """
+    returns current fx rate for usd - czk pair
+    """
     url = "https://www.cnb.cz/en/financial-markets/foreign-exchange-market/central-bank-exchange-rate-fixing/central-bank-exchange-rate-fixing/daily.txt"
     response = requests.get(url)
     data = response.text
@@ -316,11 +322,21 @@ def fetch_usdrate() -> Decimal():
             return rate
 
 
+def tell(number: Decimal) -> Decimal():
+    """
+    rounds the number to preferred decimals
+    """
+    return(round(number, decimals))
+
+
 def run():
+    global decimals
     s_currency = "CZK"
     s_eur = fetch_eurrate()
     s_usd = fetch_usdrate()
     file = "file.csv"
+    decimals = 3
+
     # file = input(f"Enter .csv file name: ")
     divider = "="*40
 
