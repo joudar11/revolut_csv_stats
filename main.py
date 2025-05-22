@@ -316,6 +316,8 @@ def tell_year(year: int):
     print(f"{currency} [{year}] Topups: {tell(fetch_year_topups(year))}")
     print(f"{currency} [{year}] Withdrawals: {tell(fetch_year_withdrawals(year))}")
     print(f"{currency} [{year}] Invested: {tell(fetch_year_topups(year)+fetch_year_withdrawals(year))}")
+    if fetch_year_sells(year) > Decimal(100000):
+        print(f"!!! {currency} [{year}] Tax warning: Sales exceeded 100,000 CZK – you are obliged to file a tax return.")
 
 
 def fetch_fxrate(currency_: str) -> Decimal():
