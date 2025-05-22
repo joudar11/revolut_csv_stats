@@ -297,7 +297,7 @@ def tell_nowinvested():
         else:
             print("ERROR.")
 
-
+    print(f"")
     print(f"{currency} [NOW] Invested: {tell(sum_topups()+sum_withdrawals())}")
     print("")
     print(f"{currency} [NOW] Value: {tell(sum(values))}")
