@@ -12,6 +12,7 @@ dividends = [[], []]
 fees = [[], []]
 topups = [[], []]
 withdrawals = [[], []]
+tickers = {}
 
 def load_csv(filename: str):
     """
@@ -329,28 +330,83 @@ def tell(number: Decimal) -> Decimal():
     return(round(number, decimals))
 
 
-def run():
-    global decimals
-    s_currency = "CZK"
-    s_eur = fetch_eurrate()
-    s_usd = fetch_usdrate()
-    file = "file.csv"
-    decimals = 3
+def fetch_tickers():
+    """
+    adds tickers information in global tickers dict. {ticker_name: [amount held, money spent]} 
+    """
+    global tickers
+    tickers_set = set()
+    for operation in operations:
+        if operation[1]:
+            tickers_set.add(operation[1])
 
-    # file = input(f"Enter .csv file name: ")
+    tickers_list = sorted(tickers_set)
+
+    tickers = {ticker: [Decimal(0), Decimal(0)] for ticker in tickers_list}
+
+    for operation in operations:
+        if operation[3] and operation[5]:
+            ticker = operation[1]
+            amount = Decimal(operation[3])
+            money = Decimal(operation[5])/Decimal(operation[7])
+            if operation[2] in ("BUY - MARKET", "SELL - MARKET", "STOCK SPLIT"):
+                if operation[2] == "BUY - MARKET":
+                    tickers[ticker][0] += amount
+                    tickers[ticker][1] += money
+                if operation[2] == "SELL - MARKET":
+                    tickers[ticker][0] -= amount
+                    tickers[ticker][1] -= money
+                if operation[2] == "STOCK SPLIT":
+                    tickers[ticker][0] += amount
+                    tickers[ticker][1] += money
+     
+
+
+def tell_tickers():
+    print(f"Ticker summaries:")
+    print(divider)
+    for ticker, (amount, money) in tickers.items():
+        if amount == 0:
+            amount_print = int(0)
+        else:
+            amount_print = amount
+        print(f"Ticker: {ticker}")
+        print(f"Amount: {amount_print}")
+        print(f"SUM: {tell(money)} {currency}")
+        print(divider)
+    pass
+
+
+def run():
+    # how many decimals to be used in stats:
+    global decimals
+    decimals = 3
+    # name of currency showns in stats (CZK)
+    s_currency = "CZK"
+    # name of the Revolut statement .csv file
+    file = "file.csv"
+    if not file.endswith(".csv"):
+        file += ".csv"
+    # divider to be shown in report
+    global divider
     divider = "="*40
 
+    # check file exists
     if not os.path.exists(file):
         print(f'File not found. Put your Revolut statement named "{file}" in the same directory as this programme and run it again.')
         print("Terminating...")
         quit()
 
+    # set currency name and fx rates
+    s_eur = fetch_eurrate()
+    s_usd = fetch_usdrate()
     set_eur(Decimal(s_eur))
     set_usd(Decimal(s_usd))
     set_currency(s_currency)
 
     load_csv(file)
 
+    # process the file, save the values
     remove_symbols()
     fetch_sells()
     fetch_buys()
@@ -358,6 +414,7 @@ def run():
     fetch_fees()
     fetch_withdrawals()
     fetch_topups()
+    fetch_tickers()
 
     currentyear = datetime.now().year
 
@@ -372,7 +429,7 @@ def run():
     for year in range(currentyear, fetch_startyear()-1, -1):
         tell_year(year)
         print(divider)
-    
+    tell_tickers()
 
 if __name__ == "__main__":
     run()
