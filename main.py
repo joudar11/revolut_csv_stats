@@ -279,8 +279,31 @@ def tell_nowinvested():
     '''
     Tells how much money is invested - sum of topups and withdrawals
     '''
+    values = set()
+    for ticker, (amount, money) in tickers.items():
+        if amount == 0:
+            amount_print = int(0)
+        else:
+            amount_print = amount
+
+        price = get_price(ticker)
+        currency_ = get_currency(ticker)
+        value = amount_print * price
+
+        if currency_ == "USD":
+            values.add(Decimal(value * usd))
+        elif currency_ == "EUR":
+            values.add(Decimal(value * eur))
+        else:
+            print("ERROR.")
+
+
     print(f"{currency} [NOW] Invested: {tell(sum_topups()+sum_withdrawals())}")
-    print("    (Topups - withdrawals)")
+    print("")
+    print(f"{currency} [NOW] Value: {tell(sum(values))}")
+    print("")
+    print(f"{currency} [NOW] Profit/loss: {tell(sum(values) - (sum_topups()+sum_withdrawals()))}")
+    print("")
 
 
 def tell_year(year: int):
@@ -449,7 +472,7 @@ def run():
     s_currency = "CZK"
     # name of the Revolut statement .csv file
     global file
-    file = "statement.csv"
+    file = "23.csv"
 
     # divider to be shown in report
     global divider
