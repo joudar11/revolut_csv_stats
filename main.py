@@ -131,9 +131,9 @@ def fetch_year_sells(year: int) -> Decimal:
     for operation in operations:
         if operation[0].startswith(str(year)) and operation[2] == "SELL - MARKET":
             if operation[6] == "USD":
-                sells_y += Decimal(operation[5])*usd
+                sells_y += Decimal(operation[5])/Decimal(operation[7])
             elif operation[6] == "EUR":
-                sells_y += Decimal(operation[5])*eur
+                sells_y += Decimal(operation[5])/Decimal(operation[7])
     return sells_y
 
 
@@ -145,9 +145,9 @@ def fetch_year_buys(year: int) -> Decimal:
     for operation in operations:
         if operation[0].startswith(str(year)) and operation[2] == "BUY - MARKET":
             if operation[6] == "USD":
-                buys_y += Decimal(operation[5])*usd
+                buys_y += Decimal(operation[5])/Decimal(operation[7])
             elif operation[6] == "EUR":
-                buys_y += Decimal(operation[5])*eur
+                buys_y += Decimal(operation[5])/Decimal(operation[7])
     return buys_y
             
 
@@ -159,9 +159,9 @@ def fetch_year_topups(year: int) -> Decimal:
     for operation in operations:
         if operation[0].startswith(str(year)) and operation[2] == "CASH TOP-UP":
             if operation[6] == "USD":
-                topups_y += Decimal(operation[5])*usd
+                topups_y += Decimal(operation[5])/Decimal(operation[7])
             elif operation[6] == "EUR":
-                topups_y += Decimal(operation[5])*eur
+                topups_y += Decimal(operation[5])/Decimal(operation[7])
     return topups_y
 
 
@@ -173,9 +173,9 @@ def fetch_year_withdrawals(year: int) -> Decimal:
     for operation in operations:
         if operation[0].startswith(str(year)) and operation[2] == "CASH WITHDRAWAL":
             if operation[6] == "USD":
-                withdrawals_y += Decimal(operation[5])*usd
+                withdrawals_y += Decimal(operation[5])/Decimal(operation[7])
             elif operation[6] == "EUR":
-                withdrawals_y += Decimal(operation[5])*eur
+                withdrawals_y += Decimal(operation[5])/Decimal(operation[7])
     return withdrawals_y
 
 
@@ -186,17 +186,17 @@ def fetch_topups():
     for operation in operations:
         if operation[2] == "CASH TOP-UP":
             if operation[6] == "USD":
-                topups[0].append(Decimal(operation[5]))
+                topups[0].append(Decimal(operation[5])/Decimal(operation[7]))
             if operation[6] == "EUR":
-                topups[1].append(Decimal(operation[5]))
+                topups[1].append(Decimal(operation[5])/Decimal(operation[7]))
 
 
 def sum_topups() -> Decimal:
     '''
     Returns sum of topups in set currency.
     '''
-    usd_t = sum(topups[0])*usd
-    eur_t = sum(topups[1])*eur
+    usd_t = sum(topups[0])
+    eur_t = sum(topups[1])
     return usd_t+eur_t
 
 
@@ -207,17 +207,17 @@ def fetch_withdrawals():
     for operation in operations:
         if operation[2] == "CASH WITHDRAWAL":
             if operation[6] == "USD":
-                withdrawals[0].append(Decimal(operation[5]))
+                withdrawals[0].append(Decimal(operation[5])/Decimal(operation[7]))
             if operation[6] == "EUR":
-                withdrawals[1].append(Decimal(operation[5]))
+                withdrawals[1].append(Decimal(operation[5])/Decimal(operation[7]))
 
 
 def sum_withdrawals() -> Decimal():
     '''
     Returns sum of withdrawals in set currency.
     '''
-    usd_w = sum(withdrawals[0])*usd
-    eur_w = sum(withdrawals[1])*eur
+    usd_w = sum(withdrawals[0])
+    eur_w = sum(withdrawals[1])
     return usd_w+eur_w
 
 
@@ -270,7 +270,7 @@ def tell_alltime():
     print(f"{currency} [ALL TIME] Fees: {round(sum_fees(), 2)}")
     print(f"{currency} [ALL TIME] Topups: {round(sum_topups(), 2)}")
     print(f"{currency} [ALL TIME] Withdrawals: {round(sum_withdrawals(), 2)}")
-    print(f"{currency} [ALL TIME] Balance: {round(sum_topups()-abs(sum_withdrawals()), 2)}")
+    print(f"{currency} [ALL TIME] Balance: {round(sum_topups()+sum_withdrawals(), 2)}")
 
 
 def tell_nowinvested():
@@ -289,7 +289,7 @@ def tell_year(year: int):
     print(f"{currency} [{year}] Invested: {round(fetch_year_buys(year)-fetch_year_sells(year), 2)}")
     print(f"{currency} [{year}] Topups: {round(fetch_year_topups(year), 2)}")
     print(f"{currency} [{year}] Withdrawals: {round(fetch_year_withdrawals(year), 2)}")
-    print(f"{currency} [{year}] Balance: {round(fetch_year_topups(year)-abs(fetch_year_withdrawals(year)), 2)}")
+    print(f"{currency} [{year}] Balance: {round(fetch_year_topups(year)+fetch_year_withdrawals(year), 2)}")
 
 
 def fetch_eurrate() -> Decimal():
