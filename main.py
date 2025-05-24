@@ -481,6 +481,13 @@ def run():
     set_usd(Decimal(s_usd))
     set_currency(s_currency)
 
+    print(divider)
+    print(f"EUR to CZK rate used: {s_eur}")
+    print(f"USD to CZK rate used: {s_usd}")
+    print(divider)
+    print(f"Processing data...")
+    print(divider)
+    
     load_csv(file)
 
     # process the file, save the values
@@ -495,10 +502,6 @@ def run():
 
     currentyear = datetime.now().year
 
-    print(divider)
-    print(f"EUR to CZK rate used: {s_eur}")
-    print(f"USD to CZK rate used: {s_usd}")
-    print(divider)
     tell_nowinvested()
     print(divider)
     tell_alltime()
