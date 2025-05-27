@@ -1,109 +1,64 @@
-# revolut_csv_stats
+# Revolut Statement Analyzer (Python)
 
-A Python app to **analyze your Revolut investment statement**. It automatically parses the `.csv` file, calculates buys, sells, dividends, fees, deposits, withdrawals, the current value of held stocks, and the profit/loss in CZK. The output includes per-year breakdowns and total summaries.
+Tento projekt je **offline Python aplikace**, která slouží k analýze exportu investičního výpisu z Revolutu ve formátu `.csv`. Na základě transakcí (nákupy, prodeje, dividendy, poplatky atd.) vypočítá klíčové statistiky o vývoji investic.
 
----
+## 🧩 Funkce
 
-## Features
+- Výpočet celkových nákupů, prodejů, dividend, poplatků, vkladů a výběrů
+- Přepočet měn (USD/EUR → CZK) podle aktuálního kurzu ČNB
+- Zobrazení statistik po jednotlivých letech
+- Výpočet aktuální hodnoty portfolia podle kurzů z Yahoo Finance
+- Výstraha při překročení prodejů nad 100 000 Kč (daňová povinnost)
 
-- Automatic calculation of:
-  - Buys, sells, and dividends
-  - Fees and net deposits/withdrawals
-  - Current value of held stocks
-- Currency conversion using **live CZK rates from CNB** (for EUR and USD)
-- Multi-currency transaction support
-- Ticker correction for Yahoo Finance (e.g., `BRK.B â†’ BRK-B`)
-- Console output grouped by year and total
+## ✅ Požadavky
 
----
-
-## Sample Output
-
-```
-========================================
-EUR to CZK rate used: 24.570
-USD to CZK rate used: 22.980
-========================================
-
-CZK [NOW] Invested: 58240.320
-CZK [NOW] Value: 61221.270
-CZK [NOW] Profit/loss: 2980.950
-
-========================================
-CZK [ALL TIME] Sells: 11986.620
-CZK [ALL TIME] Buys: 10584.180
-CZK [ALL TIME] Balance: -1402.440
-CZK [ALL TIME] Dividends: 120.900
-CZK [ALL TIME] Fees: 98.400
-CZK [ALL TIME] Topups: 57700.000
-CZK [ALL TIME] Withdrawals: 540.320
-...
-```
-
----
-
-## Requirements
-
-- Python 3.10+
-- Libraries:
+- Python 3.8+
+- Knihovny:
   - `requests`
   - `yfinance`
-  - `decimal` (built-in)
-  - `csv`, `datetime`, `os` (built-in)
+  - `decimal`
+  - `csv`
+  - `datetime`
 
----
+Instalace závislostí:
 
-## Installation
+```bash
+pip install -r requirements.txt
+```
 
-1. **Clone the repository**:
-    ```bash
-    git clone https://github.com/joudar11/revolut_csv_stats.git
-    cd revolut_csv_stats
-    ```
+## 📄 Použití
 
-2. **Create a virtual environment** (recommended):
-    ```bash
-    python -m venv .venv
-    source .venv/bin/activate  # Windows: .venv\Scripts\activate
-    ```
-
-3. **Install dependencies**:
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-4. **Place your Revolut CSV**:
-    - Export your statement from Revolut
-    - Rename it to `statement.csv` and place it in the project root (or enter a different name at launch)
-
----
-
-## Usage
+1. Umísti výpis z Revolutu (např. `statement.csv`) do stejné složky jako skript.
+2. Spusť hlavní soubor:
 
 ```bash
 python main.py
 ```
 
----
+3. Program načte soubor, zpracuje data a zobrazí:
+   - Přehled investic v CZK (aktuální hodnota, zisk/ztráta)
+   - Souhrny za jednotlivé roky
+   - Výpis jednotlivých tickerů a jejich vývoj
 
-## Notes
+## 📊 Vzorec výpočtu
 
-- The expected CSV format is:
-  ```
-  Date,Ticker,Type,Quantity,Price per share,Total Amount,Currency,FX Rate
-  ```
-- If the file is not found, the app will prompt for a different filename.
-- Some tickers are auto-corrected for compatibility with Yahoo Finance (e.g., `BRK.B â†’ BRK-B`)
+Přepočet do CZK probíhá podle aktuálního kurzu ČNB, který si program stáhne automaticky. Hodnoty z výpisu jsou čištěny od symbolů, čárek apod.
 
----
+## 📁 Struktura projektu
 
-## Author
+```
+projekt/
+├── main.py               # hlavní analyzátor
+├── requirements.txt      # seznam závislostí
+├── statement.csv         # investiční výpis z Revolutu (není součástí repozitáře)
+```
 
-Created by **[joudar11](https://github.com/joudar11)**  
-Feel free to open an issue or pull request for suggestions or fixes.
+## ⚠️ Upozornění
 
----
+- Tento nástroj je určen pouze pro **osobní analýzu investic**.
+- Neprovádí žádné úřední daňové výpočty.
+- Vždy ověř konečné hodnoty a legislativu s účetním.
 
-## License
+## 👤 Autor
 
-MIT License
+**Kryštof Klika**  
