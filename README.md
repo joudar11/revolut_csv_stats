@@ -9,6 +9,7 @@ Tento projekt je **offline Python aplikace**, která slouží k analýze exportu
 - Zobrazení statistik po jednotlivých letech
 - Výpočet aktuální hodnoty portfolia podle kurzů z Yahoo Finance
 - Výstraha při překročení prodejů nad 100 000 Kč (daňová povinnost)
+- (některé funkce jsou "zbytečně" rozděleny na USD a EUR operace - počítá se s budoucí úpravou.)
 
 ## ✅ Požadavky
 
