@@ -13,7 +13,7 @@ Tento projekt je **offline Python aplikace**, která slouží k analýze exportu
 
 ## ✅ Požadavky
 
-- Python 3.8+
+- Python 3.13
 - Knihovny:
   - `requests`
   - `yfinance`
